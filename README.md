@@ -1,2 +1,2 @@
-# gopher.ddns.net
+# website
 The code for [My website](https://gopher.ddns.net) :)
