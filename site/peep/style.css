@@ -1,0 +1,58 @@
+/*
+Styles for index.html
+*/
+h1 {
+	font-weight: normal;
+	font-family: "Georgia", sans-serif;
+
+	line-height: 84px;
+	font-size: 72px;
+	color: red;
+}
+
+#leaveMessage {
+	font-weight: normal;
+	font-family: "Georgia", sans-serif;
+
+	color: blue;
+	line-height: 42px;
+	font-size: 36px;
+}
+
+#leaveMessage label {
+	font-weight: normal;
+	font-family: "Georgia", sans-serif;
+
+	color: blue;
+	line-height: 42px;
+	font-size: 36px;
+}
+
+#leaveMessage button {
+	color: blue;
+}
+
+#leaveMessage label {
+	height: 40px;
+	width: 30px;
+
+}
+
+body {
+	background-image: url(pictures/bg.jpg);
+	background-repeat: no-repeat;
+	background-size: cover;
+}
+
+body button {
+	border: medium;
+	color: red;
+	padding: 10px;
+	text-align: center;
+	font-size: 40px;
+}
+
+#hiddenVideo #video {
+	position: relative;
+	left: 25%;
+}
