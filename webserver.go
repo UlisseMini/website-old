@@ -1,17 +1,14 @@
 package main
 
 import (
-	//"golang.org/x/crypto/acme/autocert"
-	"net/http"
-	//"time"
 	"fmt"
+	"net/http"
 	"os"
 )
 
 var (
-	// Default to port 80
 	addr    string = ":443"
-	sitedir string = "site"
+	sitedir string = "resources"
 	fs      http.Handler
 )
 
