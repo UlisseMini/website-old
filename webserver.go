@@ -66,21 +66,19 @@ func makeRootHandler() http.HandlerFunc {
 
 // restartURL
 func restartHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Printf("%s entered restart", r.RemoteAddr)
-	fmt.Fprintf(w, "Restarting...")
+	fmt.Printf("%s entered restart\n", r.RemoteAddr)
+	fmt.Fprintf(w, "Restarting webserver...")
 
 	cmd := exec.Command("sudo", "/home/pi/website/restart.sh")
-	cmd.Stdout = w
-	cmd.Stderr = w
 
 	err := cmd.Start()
 	if err != nil {
-		fmt.Fprintf(w, "%v\n", err)
+		fmt.Printf(w, "%v\n", err)
 	}
 
 	err = cmd.Process.Release()
 	if err != nil {
-		fmt.Fprintf(w, "%v\n", err)
+		fmt.Printf(w, "%v\n", err)
 	}
 }
 
