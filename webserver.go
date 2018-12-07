@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"os/exec"
 )
 
 var (
@@ -19,11 +20,7 @@ const (
 )
 
 func init() {
-	if len(os.Args) == 2 {
-		addr = ":" + os.Args[1]
-	}
-
-	fs = http.FileServer(http.Dir("site"))
+	fs = http.FileServer(http.Dir(sitedir))
 }
 
 // I could just have the function, but i saw a talk and some guy said this was good
@@ -70,9 +67,21 @@ func makeRootHandler() http.HandlerFunc {
 // restartURL
 func restartHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Printf("%s entered restart", r.RemoteAddr)
-	fmt.Fprintf(r, "Restarting...")
+	fmt.Fprintf(w, "Restarting...")
 
-	run("sudo /home/pi/website/restart.sh")
+	cmd := exec.Command("sudo", "/home/pi/website/restart.sh")
+	cmd.Stdout = w
+	cmd.Stderr = w
+
+	err := cmd.Start()
+	if err != nil {
+		fmt.Fprintf(w, "%v\n", err)
+	}
+
+	err = cmd.Process.Release()
+	if err != nil {
+		fmt.Fprintf(w, "%v\n", err)
+	}
 }
 
 // Yeah i get a custom handler, git gud git :L
@@ -116,11 +125,4 @@ func handle(err error) {
 		println(err.Error())
 		os.Exit(1)
 	}
-}
-
-func run(s string) {
-	c := strings.Split(s)
-	cmd := exec.Command(c[0], c[1:]...)
-
-	c.Start()
 }
