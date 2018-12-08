@@ -70,15 +70,17 @@ func restartHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Restarting webserver...")
 
 	cmd := exec.Command("sudo", "/home/pi/website/restart.sh")
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stdout
 
 	err := cmd.Start()
 	if err != nil {
-		fmt.Printf(w, "%v\n", err)
+		fmt.Printf("%v\n", err)
 	}
 
 	err = cmd.Process.Release()
 	if err != nil {
-		fmt.Printf(w, "%v\n", err)
+		fmt.Printf("%v\n", err)
 	}
 }
 
