@@ -1,9 +1,10 @@
-FROM golang:latest
+FROM golang:1.11
 
-WORKDIR /go/github.com/itsyourboychipsahoy/website
-COPY . .
+RUN mkdir -p /go/src/website
+WORKDIR /go/src/website
+COPY . /go/src/website
 
-RUN go get -d -v ./...
-RUN go install -v ./...
+#ONBUILD RUN go get -d -v ./...
+ONBUILD RUN go build .
 
-CMD ["website"]
+CMD ["./website"]
