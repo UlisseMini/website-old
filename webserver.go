@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"net/http"
 	"os"
-	"os/exec"
 )
 
 var (
@@ -64,24 +63,6 @@ func makeRootHandler() http.HandlerFunc {
 	}
 }
 
-// restartURL
-func restartHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Printf("%s entered restart\n", r.RemoteAddr)
-	fmt.Fprintf(w, "Restarting webserver...")
-
-	cmd := exec.Command("sudo", "/home/pi/website/restart.sh")
-
-	err := cmd.Start()
-	if err != nil {
-		fmt.Printf(w, "%v\n", err)
-	}
-
-	err = cmd.Process.Release()
-	if err != nil {
-		fmt.Printf(w, "%v\n", err)
-	}
-}
-
 // Yeah i get a custom handler, git gud git :L
 func peepHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Printf("%s entered the peep zone", r.RemoteAddr)
@@ -111,7 +92,6 @@ func main() {
 	// Create server
 	mux := http.NewServeMux()
 	mux.HandleFunc("/peep", peepHandler)
-	mux.HandleFunc("/restart", restartHandler)
 	mux.HandleFunc("/", makeRootHandler())
 
 	fmt.Printf("Listening on %s\n", addr)
