@@ -1,12 +1,9 @@
 FROM golang:1.11
 
-ONBUILD RUN mkdir -p /go/src/website
-ONBUILD RUN mkdir -p /etc/letsencrypt/archive/gopher.ddns.net/
-ONBUILD WORKDIR /go/src/website
-ONBUILD COPY . /go/src/website
-ONBUILD COPY /etc/letsencrypt/archive/gopher.ddns.net/cert1.pem /etc/letsencrypt/archive/gopher.ddns.net
-ONBUILD COPY /etc/letsencrypt/archive/gopher.ddns.net/privkey1.pem /etc/letsencrypt/archive/gopher.ddns.net
+RUN mkdir -p /go/src/website/resources
+WORKDIR /go/src/website
+COPY . /go/src/website
 
-ONBUILD RUN go build .
+RUN go build .
 
 CMD ["./website"]
