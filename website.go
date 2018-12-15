@@ -22,45 +22,46 @@ func init() {
 	fs = http.FileServer(http.Dir(sitedir))
 }
 
-// I could just have the function, but i saw a talk and some guy said this was good
-func makeRootHandler() http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		if r.URL.Path == "/" {
-			fmt.Printf("%s connected to /", r.RemoteAddr)
-		}
-
-		switch r.Method {
-		// If its a post request log it.
-		case "POST":
-			err := r.ParseForm()
-			if err != nil {
-				fmt.Printf("ParseForm error: %v\n", err)
-				return
-			}
-
-			name := r.FormValue("name")
-			message := r.FormValue("message")
-
-			if passesFilter(message) && passesFilter(name) && len(name) < 20 {
-				data := fmt.Sprintf("[%s:%s] %s\n", r.RemoteAddr, name, message)
-				fmt.Print(data)
-
-				file, err := os.OpenFile(msgfile, os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0666)
-				if err != nil {
-					fmt.Println("Failed to open", msgfile)
-					fmt.Println(err)
-					break
-				}
-				defer file.Close()
-				_, err = file.Write([]byte(data))
-				if err != nil {
-					fmt.Println("Failed to message write to file\n", err)
-				}
-			}
-		}
-		// Serve the code files
-		fs.ServeHTTP(w, r)
+func rootHandler(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path == "/" {
+		fmt.Printf("%s connected to /", r.RemoteAddr)
 	}
+
+	switch r.Method {
+	// If its a post request log it.
+	case "POST":
+		err := r.ParseForm()
+		if err != nil {
+			fmt.Printf("ParseForm error: %v\n", err)
+			return
+		}
+
+		name := r.FormValue("name")
+		message := r.FormValue("message")
+
+		if passesFilter(message) && passesFilter(name) && len(name) < 20 {
+			data := fmt.Sprintf("[%s:%s] %s\n",
+				r.RemoteAddr, name, message)
+			fmt.Print(data)
+
+			file, err := os.OpenFile(msgfile,
+				os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0666)
+
+			if err != nil {
+				fmt.Println("Failed to open", msgfile)
+				fmt.Println(err)
+				break
+			}
+
+			defer file.Close()
+			_, err = file.Write([]byte(data))
+			if err != nil {
+				fmt.Println("Failed to message write to file\n", err)
+			}
+		}
+	}
+	// Serve the code files
+	fs.ServeHTTP(w, r)
 }
 
 // Yeah i get a custom handler, git gud git :L
@@ -92,7 +93,7 @@ func main() {
 	// Create server
 	mux := http.NewServeMux()
 	mux.HandleFunc("/peep", peepHandler)
-	mux.HandleFunc("/", makeRootHandler())
+	mux.HandleFunc("/", rootHandler)
 
 	fmt.Printf("Listening on %s\n", addr)
 	fmt.Println(http.ListenAndServeTLS(addr, certfile, keyfile, mux))
