@@ -14,8 +14,8 @@ var (
 
 const (
 	msgfile  = "messages.txt"
-	certfile = "/etc/letsencrypt/archive/gopher.ddns.net/cert1.pem"
-	keyfile  = "/etc/letsencrypt/archive/gopher.ddns.net/privkey1.pem"
+	certfile = "/letsencrypt/cert1.pem"
+	keyfile  = "/letsencrypt/privkey1.pem"
 )
 
 func init() {

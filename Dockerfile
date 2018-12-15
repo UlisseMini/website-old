@@ -1,9 +1,22 @@
-FROM golang:1.11
+# First stage, build the program
+FROM golang as builder
+WORKDIR /build
 
-RUN mkdir -p /go/src/website/resources
-WORKDIR /go/src/website
-COPY . /go/src/website
+# Ensure go mod dependences
+ENV GO111MODULE=on
 
-RUN go build .
+COPY go.mod .
+# uncomment this if you've got dependences.
+#COPY go.sum .
 
-CMD ["./website"]
+RUN go mod download
+
+# Build the program
+COPY . .
+RUN CGO_ENABLED=0 go build -o binary
+
+# Second stage, take only the binary
+FROM scratch
+COPY --from=builder /build/binary /binary
+
+ENTRYPOINT ["./binary"]
