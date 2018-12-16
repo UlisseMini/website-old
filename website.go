@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	log "github.com/sirupsen/logrus"
 	"net/http"
 	"os"
 )
@@ -24,7 +25,7 @@ func init() {
 
 func rootHandler(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path == "/" {
-		fmt.Printf("%s connected to /", r.RemoteAddr)
+		log.Debugf("%s connected to /", r.RemoteAddr)
 	}
 
 	switch r.Method {
@@ -32,7 +33,7 @@ func rootHandler(w http.ResponseWriter, r *http.Request) {
 	case "POST":
 		err := r.ParseForm()
 		if err != nil {
-			fmt.Printf("ParseForm error: %v\n", err)
+			log.Errorf("ParseForm error: %v\n", err)
 			return
 		}
 
@@ -42,21 +43,20 @@ func rootHandler(w http.ResponseWriter, r *http.Request) {
 		if passesFilter(message) && passesFilter(name) && len(name) < 20 {
 			data := fmt.Sprintf("[%s:%s] %s\n",
 				r.RemoteAddr, name, message)
-			fmt.Print(data)
+			log.Info(data)
 
 			file, err := os.OpenFile(msgfile,
 				os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0666)
 
 			if err != nil {
-				fmt.Println("Failed to open", msgfile)
-				fmt.Println(err)
+				log.Errorf("Failed to open %s: %v\n", msgfile, err)
 				break
 			}
 
 			defer file.Close()
 			_, err = file.Write([]byte(data))
 			if err != nil {
-				fmt.Println("Failed to message write to file\n", err)
+				log.Errorf("Failed to message write to file: %v\n", err)
 			}
 		}
 	}
@@ -64,14 +64,14 @@ func rootHandler(w http.ResponseWriter, r *http.Request) {
 	fs.ServeHTTP(w, r)
 }
 
-// Yeah i get a custom handler, git gud git :L
+// Yeah i get a custom mustNotr, git gud git :L
 func peepHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Printf("%s entered the peep zone", r.RemoteAddr)
+	log.Tracef("%s entered the peep zone", r.RemoteAddr)
 	fs.ServeHTTP(w, r)
 }
 
 func httpHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Printf("%s Connected via http, redirecting to https...\n", r.RemoteAddr)
+	log.Tracef("%s Connected via http, redirecting to https...\n", r.RemoteAddr)
 	http.Redirect(w, r, "https://gopher.ddns.net", http.StatusSeeOther)
 }
 
@@ -89,19 +89,17 @@ func passesFilter(thing string) bool {
 func main() {
 	// web redirect to https
 	http.HandleFunc("/", httpHandler)
-	go http.ListenAndServe(":80", nil)
-	// Create server
+	go func() {
+		log.Errorln(http.ListenAndServe(":80", nil))
+	}()
+
+	// Create serve mux
 	mux := http.NewServeMux()
 	mux.HandleFunc("/peep", peepHandler)
 	mux.HandleFunc("/", rootHandler)
 
-	fmt.Printf("Listening on %s\n", addr)
-	fmt.Println(http.ListenAndServeTLS(addr, certfile, keyfile, mux))
-}
-
-func handle(err error) {
-	if err != nil {
-		println(err.Error())
-		os.Exit(1)
-	}
+	// Start listening
+	log.Infof("Listening on %s\n", addr)
+	err := http.ListenAndServeTLS(addr, certfile, keyfile, mux)
+	log.Fatal(err)
 }
