@@ -17,10 +17,37 @@ const (
 	msgfile  = "messages.txt"
 	certfile = "/letsencrypt/cert1.pem"
 	keyfile  = "/letsencrypt/privkey1.pem"
+	logfile  = "/logs/latest.log"
 )
 
 func init() {
 	fs = http.FileServer(http.Dir(sitedir))
+}
+
+func main() {
+	// initalize loggers
+	f, err := os.OpenFile(logfile, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+	if err != nil {
+		log.Fatalf("Failed to open %s: %v\n", logfile, err)
+	}
+	defer f.Close()
+	log.SetOutput(f)
+
+	// web redirect to https
+	http.HandleFunc("/", httpHandler)
+	go func() {
+		log.Errorln(http.ListenAndServe(":80", nil))
+	}()
+
+	// Create serve mux
+	mux := http.NewServeMux()
+	mux.HandleFunc("/peep", peepHandler)
+	mux.HandleFunc("/", rootHandler)
+
+	// Start listening
+	log.Infof("Listening on %s\n", addr)
+	err = http.ListenAndServeTLS(addr, certfile, keyfile, mux)
+	log.Fatal(err)
 }
 
 func rootHandler(w http.ResponseWriter, r *http.Request) {
@@ -84,22 +111,4 @@ func passesFilter(thing string) bool {
 	}
 
 	return true
-}
-
-func main() {
-	// web redirect to https
-	http.HandleFunc("/", httpHandler)
-	go func() {
-		log.Errorln(http.ListenAndServe(":80", nil))
-	}()
-
-	// Create serve mux
-	mux := http.NewServeMux()
-	mux.HandleFunc("/peep", peepHandler)
-	mux.HandleFunc("/", rootHandler)
-
-	// Start listening
-	log.Infof("Listening on %s\n", addr)
-	err := http.ListenAndServeTLS(addr, certfile, keyfile, mux)
-	log.Fatal(err)
 }
