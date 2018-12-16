@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	log "github.com/sirupsen/logrus"
+	"io"
 	"net/http"
 	"os"
 )
@@ -14,7 +15,7 @@ var (
 )
 
 const (
-	msgfile  = "messages.txt"
+	msgfile  = "/logs/messages.txt"
 	certfile = "/letsencrypt/cert1.pem"
 	keyfile  = "/letsencrypt/privkey1.pem"
 	logfile  = "/logs/latest.log"
@@ -30,8 +31,15 @@ func main() {
 	if err != nil {
 		log.Fatalf("Failed to open %s: %v\n", logfile, err)
 	}
-	defer f.Close()
-	log.SetOutput(f)
+
+	defer func() {
+		if err := f.Close(); err != nil {
+			log.Error(err)
+		}
+	}()
+
+	log.SetLevel(log.TraceLevel)
+	log.SetOutput(io.MultiWriter(f, os.Stderr))
 
 	// web redirect to https
 	http.HandleFunc("/", httpHandler)
