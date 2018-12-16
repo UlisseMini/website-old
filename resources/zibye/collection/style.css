@@ -68,9 +68,11 @@ h1
 header
 {
     background-image:linear-gradient(rgba(0,0,0,0.5),rgba(0,0,0,0.5)),url(image.jpg);
-    height: 100vh;
-    background-size: cover;
+    height: 120vh;
+    background-attachment: fixed;
     background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
 }
 .button
 {
@@ -194,6 +196,68 @@ header
   height: 100%;
 }
 
-
-
-
+.iframe-container7{
+  position: relative;
+  width: 100%;
+  padding-bottom: 56.25%; 
+  height: 0;
+}
+.iframe-container7 iframe{
+  position: absolute;
+  top:550;
+  left: -200;
+  width: 100%;
+  height: 100%;
+}
+.iframe-container8{
+  position: relative;
+  width: 100%;
+  padding-bottom: 56.25%; 
+  height: 0;
+}
+.iframe-container8 iframe{
+  position: absolute;
+  top:550;
+  left: 200;
+  width: 100%;
+  height: 100%;
+}
+.iframe-container9{
+  position: relative;
+  width: 100%;
+  padding-bottom: 56.25%; 
+  height: 0;
+}
+.iframe-container9 iframe{
+  position: absolute;
+  top:800;
+  left: -1000;
+  width: 100%;
+  height: 100%;
+}
+.iframe-container10{
+  position: relative;
+  width: 100%;
+  padding-bottom: 56.25%; 
+  height: 0;
+}
+.iframe-container10 iframe{
+  position: absolute;
+  top:800;
+  left: -600;
+  width: 100%;
+  height: 100%;
+}
+.iframe-container11{
+  position: relative;
+  width: 100%;
+  padding-bottom: 56.25%; 
+  height: 0;
+}
+.iframe-container11 iframe{
+  position: absolute;
+  top:800;
+  left: -200;
+  width: 100%;
+  height: 100%;
+}

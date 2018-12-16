@@ -102,8 +102,15 @@ header
 
 .btn-two:hover
 {
-    background-color: darkred;
-    transition: all 0.5s ease-in;
+    background-color: gray;
+    transition: all 1s ease-in;
+    
+        
+}
+.btn-one:hover
+{
+    background-color: gray;
+    transition: all 1s ease-in;
     
         
 }
