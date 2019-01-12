@@ -2,16 +2,20 @@ package main
 
 import (
 	"fmt"
-	log "github.com/sirupsen/logrus"
 	"io"
 	"net/http"
 	"os"
+	"time"
+
+	log "github.com/sirupsen/logrus"
 )
 
 var (
 	addr    string = ":443"
 	sitedir string = "resources"
 	fs      http.Handler
+
+	timeout = 10 * time.Second // server timeout
 )
 
 const (
@@ -54,8 +58,19 @@ func main() {
 
 	// Start listening
 	log.Infof("Listening on %s\n", addr)
-	err = http.ListenAndServeTLS(addr, certfile, keyfile, mux)
-	log.Fatal(err)
+	server := http.Server{
+		ReadTimeout:       timeout,
+		ReadHeaderTimeout: timeout,
+		WriteTimeout:      timeout,
+		IdleTimeout:       timeout,
+
+		Addr:    ":443",
+		Handler: mux,
+	}
+
+	if err = server.ListenAndServeTLS(certfile, keyfile); err != nil {
+		log.Fatal(err)
+	}
 }
 
 func rootHandler(w http.ResponseWriter, r *http.Request) {
