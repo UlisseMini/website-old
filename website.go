@@ -33,7 +33,7 @@ func main() {
 	// initalize loggers
 	f, err := os.OpenFile(logfile, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 	if err != nil {
-		log.Fatalf("Failed to open %s: %v\n", logfile, err)
+		log.Errorf("Failed to open %s: %v\n", logfile, err)
 	}
 
 	defer func() {
@@ -69,7 +69,7 @@ func main() {
 	}
 
 	if err = server.ListenAndServeTLS(certfile, keyfile); err != nil {
-		log.Fatal(err)
+		log.Errorln(err)
 	}
 }
 
