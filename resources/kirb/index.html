@@ -5,12 +5,27 @@
 		<title>1, 2, OATMEAL</title>
 		<link rel="stylesheet" href="style.css">
 	</head>
-	<body>
+	<body style="
+		background-image: url(kirb.png);
+		background-repeat: no-repeat;
+		background-size: cover;">
+
 		<h1>
 			pls vote for kirb i give you oatmeal
 		</h1>
 		<audio autoplay loop>
 			<source src="oatmeal.mp3" type="audio/mpeg">
 		</audio>
+
+	<script>
+		function setBackground(url) {
+			document.body.style.backgroundImage = "url(\"" + url + "\"";
+		}
+
+		// ran after 3 seconds, times 1000 because it wants milliseconds
+		setTimeout(function() {
+			setBackground("https://proxy.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.askideas.com%2Fmedia%2F36%2FDont-Make-Him-Angry-Funny-Fat-Cat-Picture.jpg&f=1");
+		}, 3 * 1000);
+	</script>
 	</body>
 </html>
