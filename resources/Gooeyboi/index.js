@@ -4,13 +4,14 @@ var images = [
 	"3.jpg",
 	"4.jpg",
 	"5.png",
-	"6.jpg",
+	"6.png",
+	"7.png",
 ];
 var nextImage = 1;
 
 function setImg(id, val) {
 	var pic = document.getElementById(id);
-	pic.src = "/Gooeyboi/pictures/"+val;
+	pic.src = "/goopsie/pictures/"+val;
 }
 
 function swapImage() {
